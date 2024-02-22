@@ -11,6 +11,7 @@ export const addShipsHandler = (data, ws) => {
   const formattedShips = ships.map((ship) => {
     ship.positions = [];
     ship.positionsAroundShip = [];
+    ship.state = true;
 
     for (let i = 0; i < ship.length; i++) {
       if (ship.direction) {
@@ -114,11 +115,15 @@ export const addShipsHandler = (data, ws) => {
     ({ ships }) => ships.length,
   );
 
+  // Todo: Clear state from previous game to be able to start new one
+
   const isGameReadyToStart =
     usersShipsAmountCollection.length === MAX_ROOM_PLAYERS_COUNT &&
     usersShipsAmountCollection.every(
       (userShipsAmount) => userShipsAmount === MAX_PLAYER_SHIPS_PER_GAME,
     );
+
+  console.log();
 
   isGameReadyToStart && startGameHandler(allBoardData, ws);
 };

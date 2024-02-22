@@ -1,5 +1,8 @@
 import { getAllRooms, roomsDb } from "../db/roomsDb.js";
 import { WEBSOCKET_COMMANDS } from "../controllers/constants.js";
+import { wss } from "../../index.js";
+import { WebSocket } from "ws";
+import { broadcastMessage } from "../controllers/heplers.js";
 
 export const updateRoom = (ws) => {
   const allRooms = roomsDb.length ? [...getAllRooms()] : [];
@@ -10,5 +13,5 @@ export const updateRoom = (ws) => {
     id: 0,
   };
 
-  ws.send(JSON.stringify(updateRoomPayload));
+  broadcastMessage(JSON.stringify(updateRoomPayload));
 };

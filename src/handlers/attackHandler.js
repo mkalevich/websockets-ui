@@ -3,11 +3,13 @@ import { ATTACK_STATUSES } from "../controllers/websocket-commands-allocator/con
 import { wss } from "../../index.js";
 import { WebSocket } from "ws";
 import { getAttackPayload, getTurnPayload } from "../helpers.js";
-import { userTurn } from "../db/usersDb.js";
-import { WEBSOCKET_COMMANDS } from "../controllers/constants.js";
+import { usersDb, userTurn } from "../db/usersDb.js";
+import { finishGameHandler } from "./finishGameHandler.js";
+import { updateWinnersHandler } from "./updateWinnersHandler.js";
+import { winnersDb } from "../db/winnersDb.js";
 
-export const attackHandler = (response) => {
-  const { x, y, gameId, indexPlayer } = JSON.parse(response.data);
+export const attackHandler = (data) => {
+  const { x, y, gameId, indexPlayer } = JSON.parse(data);
 
   if (indexPlayer !== userTurn.nextUserTurnId) return;
 
@@ -34,6 +36,7 @@ export const attackHandler = (response) => {
 
       if (isAllShipPositionsKilled) {
         status = ATTACK_STATUSES.KILLED;
+        ship.state = false;
 
         wss.clients.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
@@ -62,24 +65,6 @@ export const attackHandler = (response) => {
         });
       }
     }
-
-    const isGameFinished = ship.positions.every((position) => !position.status);
-
-    if (isGameFinished) {
-      wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          const finishPayload = {
-            type: WEBSOCKET_COMMANDS.FINISH,
-            data: {
-              winPlayer: userTurn.nextUserTurnId,
-            },
-            id: 0,
-          };
-
-          client.send(JSON.stringify(finishPayload));
-        }
-      });
-    }
   });
 
   status !== ATTACK_STATUSES.KILLED &&
@@ -100,4 +85,27 @@ export const attackHandler = (response) => {
       client.send(JSON.stringify(turnPayload));
     }
   });
+
+  const isGameFinished = enemyData?.ships.every((ship) => !ship.state);
+
+  if (isGameFinished) {
+    finishGameHandler();
+
+    const currentUser = usersDb.find((user) => user.id === indexPlayer);
+
+    const winner = winnersDb.find((user) => user.username === currentUser.name);
+
+    if (winner) {
+      winnersDb.forEach((u) => {
+        if (u.username === currentUser.name) {
+          u.wins += u.wins;
+
+          updateWinnersHandler(u.username, u.wins);
+        }
+      });
+    } else {
+      winnersDb.push({ username: currentUser.name, wins: 1 });
+      updateWinnersHandler(currentUser.name, 1);
+    }
+  }
 };

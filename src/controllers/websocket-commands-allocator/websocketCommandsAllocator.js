@@ -41,11 +41,20 @@ export const websocketCommandsAllocator = ({ response, ws }) => {
 
       break;
     case WEBSOCKET_COMMANDS.ATTACK:
-      attackHandler(response);
+      attackHandler(response.data);
 
       break;
     case WEBSOCKET_COMMANDS.RANDOM_ATTACK:
-      // const { gameId, indexPlayer } = JSON.parse(response.data);
+      const { gameId, indexPlayer } = JSON.parse(response.data);
+
+      const randomAttackPayload = JSON.stringify({
+        gameId,
+        indexPlayer,
+        x: Math.floor(Math.random() * 10),
+        y: Math.floor(Math.random() * 10),
+      });
+
+      attackHandler(randomAttackPayload);
 
       break;
   }
