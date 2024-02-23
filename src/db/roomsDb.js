@@ -20,6 +20,4 @@ export const addUserToRoom = ({ roomId, user }) => {
     }
   });
 };
-export const getAllRooms = () => {
-  return roomsDb;
-};
+export const getAllRooms = () => roomsDb;

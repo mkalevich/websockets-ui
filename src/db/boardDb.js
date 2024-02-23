@@ -11,3 +11,7 @@ export const addGameDataToDb = (ships, gameId, userId) => {
 };
 
 export const getAllBoardData = () => boardDb;
+
+export const clearBoard = () => {
+  boardDb.length = 0;
+};

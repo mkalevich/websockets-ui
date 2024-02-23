@@ -123,7 +123,5 @@ export const addShipsHandler = (data, ws) => {
       (userShipsAmount) => userShipsAmount === MAX_PLAYER_SHIPS_PER_GAME,
     );
 
-  console.log();
-
   isGameReadyToStart && startGameHandler(allBoardData, ws);
 };

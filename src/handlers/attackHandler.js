@@ -1,4 +1,4 @@
-import { getAllBoardData } from "../db/boardDb.js";
+import { clearBoard, getAllBoardData } from "../db/boardDb.js";
 import { ATTACK_STATUSES } from "../controllers/websocket-commands-allocator/constants.js";
 import { wss } from "../../index.js";
 import { WebSocket } from "ws";
@@ -93,19 +93,28 @@ export const attackHandler = (data) => {
 
     const currentUser = usersDb.find((user) => user.id === indexPlayer);
 
-    const winner = winnersDb.find((user) => user.username === currentUser.name);
+    const hasCurrentUserInWinnersTable = winnersDb.find(
+      (user) => user.name === currentUser.name,
+    );
 
-    if (winner) {
-      winnersDb.forEach((u) => {
-        if (u.username === currentUser.name) {
-          u.wins += u.wins;
+    updateWinnerInDb(hasCurrentUserInWinnersTable, currentUser.name);
 
-          updateWinnersHandler(u.username, u.wins);
-        }
-      });
-    } else {
-      winnersDb.push({ username: currentUser.name, wins: 1 });
-      updateWinnersHandler(currentUser.name, 1);
-    }
+    clearBoard();
   }
+};
+
+const updateWinnerInDb = (hasWinner, currentUserName) => {
+  if (hasWinner) {
+    winnersDb.forEach((winnerUser) => {
+      if (winnerUser.name === currentUserName) {
+        winnerUser.wins += 1;
+      }
+    });
+  } else {
+    winnersDb.push({ name: currentUserName, wins: 1 });
+  }
+
+  const winUser = winnersDb.find((user) => user.name === currentUserName);
+
+  winUser && updateWinnersHandler();
 };
