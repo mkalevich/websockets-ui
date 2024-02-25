@@ -3,7 +3,6 @@ import { wss } from "../../index.js";
 import { WEBSOCKET_COMMANDS } from "../controllers/constants.js";
 import { getTurnPayload } from "../helpers.js";
 import { userTurn } from "../db/usersDb.js";
-import { broadcastMessage } from "../controllers/heplers.js";
 
 export const startGameHandler = (allGameData, ws) => {
   wss.clients.forEach((client) => {

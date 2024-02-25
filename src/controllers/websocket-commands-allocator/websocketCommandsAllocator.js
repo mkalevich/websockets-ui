@@ -3,11 +3,8 @@ import { registerUser } from "../../handlers/registerUser.js";
 import { createRoom } from "../../handlers/createRoom.js";
 import { addUserToRoomHandler } from "../../handlers/addUserToRoomHandler.js";
 import { getAllRooms } from "../../db/roomsDb.js";
-import { ATTACK_STATUSES, MAX_ROOM_PLAYERS_COUNT } from "./constants.js";
+import { MAX_ROOM_PLAYERS_COUNT } from "./constants.js";
 import { createGameHandler } from "../../handlers/createGameHandler.js";
-import { wss } from "../../../index.js";
-import { WebSocket } from "ws";
-import { getAllBoardData } from "../../db/boardDb.js";
 import { addShipsHandler } from "../../handlers/addShipsHandler.js";
 import { attackHandler } from "../../handlers/attackHandler.js";
 

@@ -115,8 +115,6 @@ export const addShipsHandler = (data, ws) => {
     ({ ships }) => ships.length,
   );
 
-  // Todo: Clear state from previous game to be able to start new one
-
   const isGameReadyToStart =
     usersShipsAmountCollection.length === MAX_ROOM_PLAYERS_COUNT &&
     usersShipsAmountCollection.every(
