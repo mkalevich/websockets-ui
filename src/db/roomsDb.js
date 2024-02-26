@@ -4,9 +4,11 @@ export const saveRoomToDb = (room) => {
   roomsDb.push(room);
 };
 
-export const addUserToRoom = ({ roomId, user }) => {
+export const addUserToRoomInDb = ({ roomId, user }) => {
   roomsDb.forEach((room) => {
-    if (room.roomId === roomId) {
+    const isCurrentRoomExists = room.roomId === roomId;
+
+    if (isCurrentRoomExists) {
       const isUserExistsInRoom = room?.roomUsers.find(
         (userInRoom) => userInRoom.index === user.id,
       );

@@ -1,8 +1,7 @@
 import { randomUUID } from "crypto";
 import { createUser } from "./createUser.js";
 import { updateRoom } from "./updateRoom.js";
-
-export const users = new Map();
+import { updateWinnersHandler } from "./updateWinnersHandler.js";
 
 export const registerUser = (data, ws) => {
   const { name, password } = JSON.parse(data);
@@ -13,11 +12,12 @@ export const registerUser = (data, ws) => {
     password,
   };
 
+  // Save user data to WebSocket instance to be able to identify by id
   ws.user = user;
-
-  users.set(ws, user.id);
 
   createUser(user, ws);
 
   updateRoom(ws);
+
+  updateWinnersHandler();
 };

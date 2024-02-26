@@ -11,5 +11,5 @@ export const updateRoom = (ws) => {
     id: 0,
   };
 
-  broadcastMessage(JSON.stringify(updateRoomPayload));
+  broadcastMessage(updateRoomPayload);
 };

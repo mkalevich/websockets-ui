@@ -1,8 +1,9 @@
 import { WEBSOCKET_COMMANDS } from "../controllers/constants.js";
 import { randomUUID } from "crypto";
-import { broadcastMessage } from "../controllers/heplers.js";
 import { wss } from "../../index.js";
 import { WebSocket } from "ws";
+import { roomsDb } from "../db/roomsDb.js";
+import { updateRoom } from "./updateRoom.js";
 
 export const createGameHandler = (isGameReadyToCreate, ws) => {
   if (isGameReadyToCreate) {
@@ -22,12 +23,11 @@ export const createGameHandler = (isGameReadyToCreate, ws) => {
       }
     });
 
-    const updateRoomPayload = {
-      type: WEBSOCKET_COMMANDS.UPDATE_ROOM,
-      data: JSON.stringify([]),
-      id: 0,
-    };
+    const roomIndex = roomsDb.findIndex(
+      ({ roomId }) => roomId === getFilledRoomDataByUserId(ws.user.id),
+    );
+    roomsDb.splice(roomIndex, 1);
 
-    broadcastMessage(updateRoomPayload);
+    updateRoom();
   }
 };
