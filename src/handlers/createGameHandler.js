@@ -4,6 +4,7 @@ import { wss } from "../../index.js";
 import { WebSocket } from "ws";
 import { roomsDb } from "../db/roomsDb.js";
 import { updateRoom } from "./updateRoom.js";
+import { getFilledRoomDataByUserId } from "../helpers.js";
 
 export const createGameHandler = (isGameReadyToCreate, ws) => {
   if (isGameReadyToCreate) {
@@ -24,7 +25,7 @@ export const createGameHandler = (isGameReadyToCreate, ws) => {
     });
 
     const roomIndex = roomsDb.findIndex(
-      ({ roomId }) => roomId === getFilledRoomDataByUserId(ws.user.id),
+      ({ roomId }) => roomId === getFilledRoomDataByUserId(ws.user.id).roomId,
     );
     roomsDb.splice(roomIndex, 1);
 
